@@ -2,6 +2,7 @@
 Progress on building a robot that can bounce a ping-pong ball forever
 
 ## TODO
+- [x] Find cool project
 - [ ] Design crude sketch, specifying DOF, # of links, actuators, and end effector
 - [ ] Figure out and purchase the actuators necessary to achieve the desired effect
 - [ ] 3D model necessary links, base, and other parts to have a 3D printable prototype

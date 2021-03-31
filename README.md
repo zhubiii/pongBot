@@ -3,8 +3,10 @@ Progress on building a robot that can bounce a ping-pong ball forever
 
 ## TODO
 - [x] Find cool project
-- [ ] Design crude sketch, specifying DOF, # of links, actuators, and end effector
-- [ ] Figure out and purchase the actuators necessary to achieve the desired effect
+- [x] Design crude sketch, specifying DOF, # of links, actuators, and end effector
+  - 4 DOF, 2 links, 4 actuators, and a paddle as the end effector
+- [x] Figure out and purchase the actuators necessary to achieve the desired effect
+  - Dynamixel AX-12a
 - [ ] 3D model necessary links, base, and other parts to have a 3D printable prototype
 - [ ] Assemble and wire parts together
 - [ ] Write driver code to be able to control the robot in a Master/Slave configuration

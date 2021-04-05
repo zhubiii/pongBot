@@ -1,0 +1,10 @@
+<launch>
+  <!-- Parameter Server from yaml config files-->
+  <rosparam file="$(find controller_agent)/config/dynamixel_config.yaml" />
+  <arg name="namespace"               default="controller_agent"/>
+
+  <node pkg="controller_agent" name="controller_agent" type="controller_agent"
+    output="screen"/>
+
+</launch>
+

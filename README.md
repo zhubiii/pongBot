@@ -9,7 +9,7 @@ Progress on building a robot that can bounce a ping-pong ball forever
   - Dynamixel AX-12a
 - [ ] 3D model necessary links, base, and other parts to have a 3D printable prototype
 - [ ] Assemble and wire parts together
-- [ ] Write driver code to be able to control the robot in a Master/Slave configuration
+- [ ] Write driver code to be able to control the robot in a controller/agent configuration
 - [ ] Figure out coordinate frame transformations of each necessary part (base, joints, end effector)
 - [ ] Use OpenCV to identify and get pose estimation of a ping pong ball
 - [ ] Figure out coordinate frame transforamtions of camera to robot

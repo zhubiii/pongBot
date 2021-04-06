@@ -21,6 +21,7 @@ int main(int argc, char** argv)
     int DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE, BAUDRATE;
     float PROTOCOL_VERSION;
     int ADDR_TORQUE_ENABLE, ADDR_GOAL_POSITION, ADDR_PRESENT_POSITION;
+    int AGENT_PAN_ID, AGENT_TILT_ID, CONTROL_PAN_ID, CONTROL_TILT_ID;
 
     n.getParam("usb_port", DEVICENAME);
     n.getParam("dxl_minimum_position_value", DXL_MINIMUM_POSITION_VALUE);
@@ -30,6 +31,10 @@ int main(int argc, char** argv)
     n.getParam("addr_torque_enable", ADDR_TORQUE_ENABLE);
     n.getParam("addr_goal_position", ADDR_GOAL_POSITION);
     n.getParam("addr_present_position", ADDR_PRESENT_POSITION);
+    n.getParam("agent_pan/ID", AGENT_PAN_ID);
+    n.getParam("agent_tilt/ID", AGENT_TILT_ID);
+    n.getParam("control_pan/ID", CONTROL_PAN_ID);
+    n.getParam("control_tilt/ID", CONTROL_TILT_ID);
 
     // Initialize PortHandler instance
     // Set the port path
@@ -41,12 +46,13 @@ int main(int argc, char** argv)
     // Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
     dynamixel::PacketHandler *packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
 
-    int index = 0;
     int dxl_comm_result = COMM_TX_FAIL;             // Communication result
-    int dxl_goal_position[2] = {DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE};         // Goal position
 
     uint8_t dxl_error = 0;                          // Dynamixel error
-    int32_t dxl_present_position = 0;               // Present position
+
+    // present positions
+    int32_t agent_pan_present_position = 0, agent_tilt_present_position = 0;
+    int32_t control_pan_present_position = 0, control_tilt_present_position = 0;
 
     // Open port
     if (portHandler->openPort())
@@ -70,27 +76,141 @@ int main(int argc, char** argv)
         return 0;
     }
 
-        dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, 1, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
-        if (dxl_comm_result != COMM_SUCCESS)
-        {
-            ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
-        }
-        else if (dxl_error != 0)
-        {
-            ROS_WARN(packetHandler->getRxPacketError(dxl_error));
-        }
-        else
-        {
-            ROS_INFO("Dynamixel 1 has been successfully connected \n");
-        } 
+    // initialize and connect to each motor
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, AGENT_PAN_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+    }
+    else if (dxl_error != 0)
+    {
+        ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+    }
+    else
+    {
+        ROS_INFO("Agent Pan motor has been successfully connected \n");
+    } 
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, AGENT_TILT_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+    }
+    else if (dxl_error != 0)
+    {
+        ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+    }
+    else
+    {
+        ROS_INFO("Agent Tilt motor has been successfully connected \n");
+    } 
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, CONTROL_PAN_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+    }
+    else if (dxl_error != 0)
+    {
+        ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+    }
+    else
+    {
+        ROS_INFO("Controller Pan motor has been successfully connected \n");
+    } 
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, CONTROL_TILT_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+    }
+    else if (dxl_error != 0)
+    {
+        ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+    }
+    else
+    {
+        ROS_INFO("Controller Tilt motor has been successfully connected \n");
+    } 
+
     int count = 0;
     ros::Rate r(1.0);
     while(n.ok()){
-        //ROS_INFO("While loop");
+        do
+        {
+            // Read control pan motor present position
+            dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, CONTROL_PAN_ID, ADDR_PRESENT_POSITION, (uint32_t*)&control_pan_present_position, &dxl_error);
+            if (dxl_comm_result != COMM_SUCCESS)
+            {
+                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+            }
+            else if (dxl_error != 0)
+            {
+                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+            }
 
+            // Read Control tilt motor present position
+            dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, CONTROL_TILT_ID, ADDR_PRESENT_POSITION, (uint32_t*)&control_tilt_present_position, &dxl_error);
+            if (dxl_comm_result != COMM_SUCCESS)
+            {
+                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+            }
+            else if (dxl_error != 0)
+            {
+                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+            }
+
+            // Read Agent Pan motor present position
+            dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, AGENT_PAN_ID, ADDR_PRESENT_POSITION, (uint32_t*)&agent_pan_present_position, &dxl_error);
+            if (dxl_comm_result != COMM_SUCCESS)
+            {
+                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+            }
+            else if (dxl_error != 0)
+            {
+                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+            }
+
+            // Read Agent tilt motor present position
+            dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, AGENT_TILT_ID, ADDR_PRESENT_POSITION, (uint32_t*)&agent_tilt_present_position, &dxl_error);
+            if (dxl_comm_result != COMM_SUCCESS)
+            {
+                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+            }
+            else if (dxl_error != 0)
+            {
+                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+            }
+
+            // Write agent pan goal position
+            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, AGENT_PAN_ID, ADDR_GOAL_POSITION, control_pan_present_position, &dxl_error);
+            if (dxl_comm_result != COMM_SUCCESS)
+            {
+                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+            }
+            else if (dxl_error != 0)
+            {
+                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+            }
+
+            // Write agent tilt goal position
+            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, AGENT_TILT_ID, ADDR_GOAL_POSITION, control_tilt_present_position, &dxl_error);
+            if (dxl_comm_result != COMM_SUCCESS)
+            {
+                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+            }
+            else if (dxl_error != 0)
+            {
+                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+            }
+
+        }while(abs(control_pan_present_position-agent_pan_present_position) != 0 && abs(control_tilt_present_position-agent_tilt_present_position) != 0);
         count++;
         r.sleep();
     }
+    // Close port
+    portHandler->closePort();
+    return 0;
 }
 
 

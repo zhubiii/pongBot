@@ -13,3 +13,14 @@ dxl_maximum_position_value: 1023
 
 # Protocol version
 protocol_version: 1.0
+
+# Set the dynamixel id for controller
+agent_pan:
+  ID: 1
+agent_tilt:
+  ID: 2
+# Set the dynamixel id for agent
+control_pan:
+  ID: 3
+control_tilt:
+  ID: 4

@@ -9,6 +9,8 @@ Progress on building a robot that can bounce a ping-pong ball forever
   - Dynamixel AX-12a
 - [x] 3D model necessary links, base, and other parts to have a 3D printable prototype
   - Will have redesigns as the project evolves
+  - First was a simple pan/tilt setup
+  - Next is to combine motors into a single arm
 - [x] Assemble and wire parts together
 - [x] Write driver code to be able to control the robot in a controller/agent configuration
   -  See the "controller_agent" package in the catkin_ws

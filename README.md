@@ -7,9 +7,11 @@ Progress on building a robot that can bounce a ping-pong ball forever
   - 4 DOF, 2 links, 4 actuators, and a paddle as the end effector
 - [x] Figure out and purchase the actuators necessary to achieve the desired effect
   - Dynamixel AX-12a
-- [ ] 3D model necessary links, base, and other parts to have a 3D printable prototype
-- [ ] Assemble and wire parts together
-- [ ] Write driver code to be able to control the robot in a controller/agent configuration
+- [x] 3D model necessary links, base, and other parts to have a 3D printable prototype
+  - Will have redesigns as the project evolves
+- [x] Assemble and wire parts together
+- [x] Write driver code to be able to control the robot in a controller/agent configuration
+  -  See the "controller_agent" package in the catkin_ws
 - [ ] Figure out coordinate frame transformations of each necessary part (base, joints, end effector)
 - [ ] Use OpenCV to identify and get pose estimation of a ping pong ball
 - [ ] Figure out coordinate frame transforamtions of camera to robot

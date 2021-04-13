@@ -1,6 +1,15 @@
 # pongBot
 Progress on building a robot that can bounce a ping-pong ball forever
 
+## Progress
+
+![image info](./images/control_agent.jpg)
+![image info](./images/base_decon.jpg)
+![image info](./images/base_ortho.jpg)
+![image info](./images/base_side.jpg)
+
+
+
 ## TODO
 - [x] Find cool project
 - [x] Design crude sketch, specifying DOF, # of links, actuators, and end effector

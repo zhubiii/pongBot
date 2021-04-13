@@ -3,10 +3,8 @@ Progress on building a robot that can bounce a ping-pong ball forever
 
 ## Progress
 
-![image info](./images/control_agent.jpg)
-![image info](./images/base_decon.jpg)
-![image info](./images/base_ortho.jpg)
-![image info](./images/base_side.jpg)
+![controller agent](./images/control_agent.jpg)
+![base deconstructed](./images/base_decon.jpg)|![base ortho view](./images/base_ortho.jpg)|![base side view](./images/base_side.jpg)
 
 
 

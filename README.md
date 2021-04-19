@@ -13,6 +13,7 @@ Progress on building a robot that can bounce a ping-pong ball forever
   - The second layer holds the pan motor which has the turntable attached to it
   - The third layer hodls the tilt motor which is a combination of the turntable and the rim
 - Each of the layers are attached by standoffs
+- I have plans to attach a steel plate to the bottom of the base such that the arm does not backflip off of a single rotation
 
 . | . | .
 :-:|:-:|:-:
@@ -48,6 +49,7 @@ Progress on building a robot that can bounce a ping-pong ball forever
 - [x] Assemble and wire parts together
 - [x] Write driver code to be able to control the robot in a controller/agent configuration
   -  See the "controller_agent" package in the catkin_ws
+- [x] Combine all motors into a single robot arm
 - [ ] Figure out coordinate frame transformations of each necessary part (base, joints, end effector)
 - [ ] Use OpenCV to identify and get pose estimation of a ping pong ball
 - [ ] Figure out coordinate frame transforamtions of camera to robot

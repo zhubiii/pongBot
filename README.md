@@ -10,7 +10,7 @@ Progress on building a robot that can bounce a ping-pong ball forever
 ### Base
 - There are 3 layers to the base
   - The first layer houses the U2D2 controller/PC interface
-  - The second layer holds the pan motor which has the turntable attached to it
+  - The second layer holds the pan motor which has the turntable attached to it and a spacer between for level
   - The third layer hodls the tilt motor which is a combination of the turntable and the rim
 - Each of the layers are attached by standoffs
 - I have plans to attach a steel plate to the bottom of the base such that the arm does not backflip off of a single rotation

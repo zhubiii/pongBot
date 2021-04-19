@@ -3,12 +3,37 @@ Progress on building a robot that can bounce a ping-pong ball forever
 
 ## Progress
 
-![controller agent](./images/control_agent.jpg)
-Base | |
-:--------------------------------------------:|:-----------------------------------------:|:---------------------------------------:
+### Controller-Agent Unit
+- There are two of these units, one is the controller and one is the agent. The agent will always mimic the pan/tilt position of the controller   
+<img alt="controller_agent" src="./images/control_agent.jpg"  width="200" />
+
+### Base
+- There are 3 layers to the base
+  - The first layer houses the U2D2 controller/PC interface
+  - The second layer holds the pan motor which has the turntable attached to it
+  - The third layer hodls the tilt motor which is a combination of the turntable and the rim
+- Each of the layers are attached by standoffs
+
+. | . | .
+:-:|:-:|:-:
 ![base deconstructed](./images/base_decon.jpg)|![base ortho view](./images/base_ortho.jpg)|![base side view](./images/base_side.jpg)
 
+### Link 1
+- The first link is 4 plates that attach to the tilt motor. The front and back plates are linked by a standoff for support. The end of the link holds the second arm joint.
 
+.|.|.|.
+:-:|:-:|:-:|:-:
+![link1 front](./images/link1_front.jpg) | ![link side1](./images/link1_side1.jpg) | ![link_side2](./images/link1_side2.jpg) | ![link_back](./images/link1_back.jpg)
+
+### Link 2
+- The second link is a combination of 2 side panels joined by a standoff for support. The end of link2 holds the end effector
+
+.|.|.|.
+:-:|:-:|:-:|:-:
+![link2 front](./images/link2_front.jpg) | ![link1 side1](./images/link2_side1.jpg) | ![link2_side2](./images/link2_side2.jpg) | ![link_back](./images/link2_back.jpg)
+
+### End Effector
+-  The end effector is a two piece 3-D printed paddle that attaches to a motor for angle control
 
 ## TODO
 - [x] Find cool project

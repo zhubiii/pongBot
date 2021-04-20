@@ -2,7 +2,7 @@
 Progress on building a robot that can bounce a ping-pong ball forever
 
 - [Progress](#Progress)
-  - [Controller-Agent Unit](#Controller_Agent Unit)
+  - [Controller-Agent Unit](#Controller-Agent Unit)
   - [Base](#Base)
   - [Link1](#Link 1)
   - [Link2](#Link 2)

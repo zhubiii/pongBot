@@ -2,17 +2,18 @@
 Progress on building a robot that can bounce a ping-pong ball forever
 
 - [Progress](#Progress)
-  - [Controller-Agent Unit](#Controller-Agent-Unit)
-  - [Base](#Base)
-  - [Link1](#Link-1)
-  - [Link2](#Link-2)
-  - [End-Effector](#End-Effector)
+  - [VERSION1](#VERSION1)
+    - [Controller-Agent Unit](#Controller-Agent-Unit)
+    - [Base](#Base)
+    - [Link1](#Link-1)
+    - [Link2](#Link-2)
+    - [End-Effector](#End-Effector)
 - [Problems Encountered](#Problems-Encountered!)
 - [TODO](#TODO)
 
 
-## Progress
-
+# Progress
+## VERSION1
 ### Controller-Agent Unit
 - There are two of these units, one is the controller and one is the agent. The agent will always mimic the pan/tilt position of the controller   
 <img alt="controller_agent" src="./images/control_agent.jpg"  width="200" />
@@ -46,12 +47,12 @@ Progress on building a robot that can bounce a ping-pong ball forever
 ### End Effector
 -  The end effector is a two piece 3-D printed paddle that attaches to a motor for angle control
 
-## Problems Encountered!
+# Problems Encountered!
 - WOBBLE
   - There is a lot of wobble in the first fully assembled test run. The turntable and second-level base (base2) are the source of a lot of instability in the system. The shaft of the motor is much smaller than the diameter of the turntable which causes wobbling. Additionally, base2 has a "trampoline" effect
   - Going to double the thickness of base2 and the turntable, and also look into designing ball-bearing support beams for the turntable. Will likely shift from ABS to PLA filament for these because PLA has higher rigidity 
 
-## TODO
+# TODO
 - [x] Find cool project
 - [x] Design crude sketch, specifying DOF, # of links, actuators, and end effector
   - 4 DOF, 2 links, 4 actuators, and a paddle as the end effector

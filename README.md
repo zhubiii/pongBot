@@ -1,6 +1,16 @@
 # pongBot
 Progress on building a robot that can bounce a ping-pong ball forever
 
+- [Progress](#Progress)
+  - [Controller-Agent Unit](#Controller_Agent Unit)
+  - [Base](#Base)
+  - [Link1](#Link 1)
+  - [Link2](#Link 2)
+  - [End-Effector](#End-Effector)
+- [Problems Encountered](#Problems Encountered!)
+- [TODO](#TODO)
+
+
 ## Progress
 
 ### Controller-Agent Unit

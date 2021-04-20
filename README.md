@@ -1,5 +1,5 @@
 # pongBot
-Progress on building a robot that can bounce a ping-pong ball forever
+Progress on building a robot that can bounce a ping-pong ball forever...maybe more?
 
 - [Progress](#Progress)
   - [VERSION1](#VERSION1)

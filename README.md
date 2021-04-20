@@ -47,6 +47,8 @@ Progress on building a robot that can bounce a ping-pong ball forever...maybe mo
 ### End Effector
 -  The end effector is a two piece 3-D printed paddle that attaches to a motor for angle control
 
+## VERSION2
+
 # Problems Encountered!
 - WOBBLE
   - There is a lot of wobble in the first fully assembled test run. The turntable and second-level base (base2) are the source of a lot of instability in the system. The shaft of the motor is much smaller than the diameter of the turntable which causes wobbling. Additionally, base2 has a "trampoline" effect

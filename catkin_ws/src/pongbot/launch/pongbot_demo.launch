@@ -1,0 +1,9 @@
+<launch>
+  <!-- Parameter Server from yaml config files-->
+  <rosparam file="$(find pongbot)/config/pongbot_config.yaml" />
+  <arg name="namespace"               default="pongbot"/>
+
+  <node pkg="pongbot" name="pongbot_demo" type="pongbot"
+    output="screen"/>
+
+</launch>

@@ -8,6 +8,11 @@
 
 #define TORQUE_ENABLE   1
 #define TORQUE_DISABLE  0
+#define NUM_JOINTS  4
+
+// Function prototypes
+void checkCommResult(int dxl_comm_result, dynamixel::PacketHandler *packetHandler, uint8_t dxl_error);
+int checkJoints(uint32_t joint_pos[], uint32_t goal_pos[], int step[]);
 
 int main(int argc, char** argv)
 {
@@ -79,111 +84,111 @@ int main(int argc, char** argv)
 
     // initialize and connect to each motor
     dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
-    if (dxl_comm_result != COMM_SUCCESS)
-    {
-        ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
-    }
-    else if (dxl_error != 0)
-    {
-        ROS_WARN(packetHandler->getRxPacketError(dxl_error));
-    }
-    else
-    {
-        ROS_INFO("Pan motor has been successfully connected \n");
-    } 
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
 
     dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
-    if (dxl_comm_result != COMM_SUCCESS)
-    {
-        ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
-    }
-    else if (dxl_error != 0)
-    {
-        ROS_WARN(packetHandler->getRxPacketError(dxl_error));
-    }
-    else
-    {
-        ROS_INFO("Tilt motor has been successfully connected \n");
-    } 
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
 
     dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
-    if (dxl_comm_result != COMM_SUCCESS)
-    {
-        ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
-    }
-    else if (dxl_error != 0)
-    {
-        ROS_WARN(packetHandler->getRxPacketError(dxl_error));
-    }
-    else
-    {
-        ROS_INFO("Elbow motor has been successfully connected \n");
-    } 
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
 
     dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
-    if (dxl_comm_result != COMM_SUCCESS)
-    {
-        ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
-    }
-    else if (dxl_error != 0)
-    {
-        ROS_WARN(packetHandler->getRxPacketError(dxl_error));
-    }
-    else
-    {
-        ROS_INFO("Paddle motor has been successfully connected \n");
-    } 
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    ROS_INFO("All motors connected successfully \n");
+
+    // present positions
+    uint32_t joint_pos[4];
+    // TODO: get goal from subscribing to a topic
+    uint32_t goal_pos[] = {JOINT_PAN_ZERO_CONFIG, JOINT_TILT_ZERO_CONFIG, JOINT_ELBOW_ZERO_CONFIG, JOINT_PADDLE_ZERO_CONFIG};
+    // Array holding the step sizes for each joint in the next cycle
+    int step[4];
 
     int count = 0;
-    ros::Rate r(1.0);
+    ros::Rate r(80.0);
     while(n.ok()){
-        do
+        // Read control pan motor present position
+        dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[0], &dxl_error);
+        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+        dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[1], &dxl_error);
+        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+        dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[2], &dxl_error);
+        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+        dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[3], &dxl_error);
+        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+            
+        if (!checkJoints(joint_pos, goal_pos, step))
         {
-            // Writing the zero configuration of the arm
-            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_GOAL_POSITION, JOINT_PAN_ZERO_CONFIG, &dxl_error);
-            if (dxl_comm_result != COMM_SUCCESS)
-            {
-                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
-            }
-            else if (dxl_error != 0)
-            {
-                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
-            }
+            ROS_INFO("Moving Joints \n");
+            ROS_INFO("JOINT POS: %d", joint_pos[1]);
+            ROS_INFO("GOAL POS %d", goal_pos[1]);
 
-            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_GOAL_POSITION, JOINT_TILT_ZERO_CONFIG, &dxl_error);
-            if (dxl_comm_result != COMM_SUCCESS)
-            {
-                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
-            }
-            else if (dxl_error != 0)
-            {
-                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
-            }
+            // Writing the goal position of the arm
+            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_GOAL_POSITION, joint_pos[0]+step[0], &dxl_error);
+            checkCommResult(dxl_comm_result, packetHandler, dxl_error);
 
-            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_GOAL_POSITION, JOINT_ELBOW_ZERO_CONFIG, &dxl_error);
-            if (dxl_comm_result != COMM_SUCCESS)
-            {
-                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
-            }
-            else if (dxl_error != 0)
-            {
-                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
-            }
+            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_GOAL_POSITION, joint_pos[1]+step[1], &dxl_error);
+            checkCommResult(dxl_comm_result, packetHandler, dxl_error);
 
-            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_GOAL_POSITION, JOINT_PADDLE_ZERO_CONFIG, &dxl_error);
-            if (dxl_comm_result != COMM_SUCCESS)
-            {
-                ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
-            }
-            else if (dxl_error != 0)
-            {
-                ROS_WARN(packetHandler->getRxPacketError(dxl_error));
-            }
-        }while(1);
+            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_GOAL_POSITION, joint_pos[2]+step[2], &dxl_error);
+            checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+            dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_GOAL_POSITION, joint_pos[3]+step[3], &dxl_error);
+            checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+        }
         count++;
         r.sleep();
     }
     // Close port
     portHandler->closePort();
     return 0;
+}
+
+/**
+ * Function to check the dynamixel comm result
+ * */
+void checkCommResult(int dxl_comm_result, dynamixel::PacketHandler *packetHandler, uint8_t dxl_error)
+{
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN(packetHandler->getTxRxResult(dxl_comm_result));
+    }
+    else if (dxl_error != 0)
+    {
+        ROS_WARN(packetHandler->getRxPacketError(dxl_error));
+    }
+}
+
+/**
+ * Function to check joint angles and see if they match the desired goal position
+ * 
+ * PARAM: Takes a joint position array, goal position array, and array specifying the next step for joints
+ * 
+ * RETURN: 0 if joint angles do not match, 1 if they do
+ * 
+ * TODO: optimize memory access
+ * */
+int checkJoints(uint32_t joint_pos[], uint32_t goal_pos[], int step[])
+{
+    bool match = true;
+    for (size_t i=0; i<NUM_JOINTS; i++)
+    {
+        if (joint_pos[i] != goal_pos[i])
+        {
+            match = false;
+            if (joint_pos[i] > goal_pos[i])
+            {
+                step[i] = -5;
+            }else if (joint_pos[i] < goal_pos[i]){
+                step[i] = 5;
+            }else{
+                step[i] = 0;
+            }
+        }
+    }
+    return match;
 }

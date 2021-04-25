@@ -126,7 +126,7 @@ int main(int argc, char** argv)
     int time_frame = 6;
     int time_to_goal = 10;
     int time_slice = time_to_goal/time_frame;
-    double rate = time_frame * 10;
+    double rate = time_frame * time_to_goal;
 
     bool restep;
 
@@ -228,8 +228,8 @@ int checkJoints(uint32_t joint_pos[], uint32_t goal_pos[], int step[], int time_
         {
             match = false;
             // Make the step size on the order of time slices
-            // update is 100hz so we need to calculate how much time (in ms) we want our motor to 
-            // make it to the goal position. Then divide that by 10ms. Call this time_slice
+            // update is 60hz so we need to calculate how much time (in ms) we want our motor to 
+            // make it to the goal position. Then divide that by 6. Call this time_slice
             // Our step then is: (goal_pos - joint_pos)/time_slice
             if (restep)
             {

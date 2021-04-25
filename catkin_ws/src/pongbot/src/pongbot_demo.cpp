@@ -28,6 +28,7 @@ int main(int argc, char** argv)
     int ADDR_TORQUE_ENABLE, ADDR_GOAL_POSITION, ADDR_PRESENT_POSITION, ADDR_SPEED;
     int JOINT_PAN_ID, JOINT_TILT_ID, JOINT_ELBOW_ID, JOINT_PADDLE_ID;
     int JOINT_PAN_ZERO_CONFIG, JOINT_TILT_ZERO_CONFIG, JOINT_ELBOW_ZERO_CONFIG, JOINT_PADDLE_ZERO_CONFIG;
+    int JOINT_PAN_SPEED, JOINT_TILT_SPEED, JOINT_ELBOW_SPEED, JOINT_PADDLE_SPEED;
 
     n.getParam("usb_port", DEVICENAME);
     n.getParam("dxl_minimum_position_value", DXL_MINIMUM_POSITION_VALUE);
@@ -46,6 +47,10 @@ int main(int argc, char** argv)
     n.getParam("joint_tilt/zero_config", JOINT_TILT_ZERO_CONFIG);
     n.getParam("joint_elbow/zero_config", JOINT_ELBOW_ZERO_CONFIG);
     n.getParam("joint_paddle/zero_config", JOINT_PADDLE_ZERO_CONFIG);
+    n.getParam("joint_pan/speed", JOINT_PAN_SPEED);
+    n.getParam("joint_tilt/speed", JOINT_TILT_SPEED);
+    n.getParam("joint_elbow/speed", JOINT_ELBOW_SPEED);
+    n.getParam("joint_paddle/speed", JOINT_PADDLE_SPEED);
 
     // Initialize PortHandler instance
     // Set the port path
@@ -99,16 +104,16 @@ int main(int argc, char** argv)
     ROS_INFO("All motors connected successfully \n");
 
     // Change operating speed of motors
-    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_SPEED, 200, &dxl_error);
+    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_SPEED, JOINT_PAN_SPEED, &dxl_error);
     checkCommResult(dxl_comm_result, packetHandler, dxl_error);
 
-    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_SPEED, 200, &dxl_error);
+    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_SPEED, JOINT_TILT_SPEED, &dxl_error);
     checkCommResult(dxl_comm_result, packetHandler, dxl_error);
 
-    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_SPEED, 200, &dxl_error);
+    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_SPEED, JOINT_ELBOW_SPEED, &dxl_error);
     checkCommResult(dxl_comm_result, packetHandler, dxl_error);
 
-    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_SPEED, 200, &dxl_error);
+    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_SPEED, JOINT_PADDLE_SPEED, &dxl_error);
     checkCommResult(dxl_comm_result, packetHandler, dxl_error);
     ROS_INFO("Initialized motor speed \n");
 

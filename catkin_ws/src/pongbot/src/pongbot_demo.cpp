@@ -123,7 +123,7 @@ int main(int argc, char** argv)
     uint32_t tmp;
 
     // x ms to get to goal / y ms time frame
-    int time_frame = 6;
+    int time_frame = 10;
     int time_to_goal = 10;
     int time_slice = time_to_goal/time_frame;
     double rate = time_frame * time_to_goal;

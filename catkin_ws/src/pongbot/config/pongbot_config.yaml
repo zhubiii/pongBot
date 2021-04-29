@@ -19,16 +19,16 @@ protocol_version: 1.0
 joint_pan:
   ID: 1
   zero_config: 512
-  speed: 300
+  speed: 100
 joint_tilt:
   ID: 2
   zero_config: 819
-  speed: 200
+  speed: 100
 joint_elbow:
   ID: 3
   zero_config: 819
-  speed: 200
+  speed: 100
 joint_paddle:
   ID: 4
   zero_config: 512
-  speed: 300
+  speed: 100

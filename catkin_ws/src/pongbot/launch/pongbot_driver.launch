@@ -3,7 +3,10 @@
   <rosparam file="$(find pongbot)/config/pongbot_config.yaml" />
   <arg name="namespace"               default="pongbot"/>
 
-  <node pkg="pongbot" name="pongbot_demo" type="pongbot_demo"
+  <node pkg="pongbot" name="pongbot_driver" type="pongbot_driver"
+    output="screen"/>
+
+  <node pkg="pongbot" name="dummy_publish" type="dummy_publish"
     output="screen"/>
 
 </launch>

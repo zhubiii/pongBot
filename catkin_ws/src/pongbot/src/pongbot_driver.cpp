@@ -7,6 +7,7 @@
 #include <string>
 
 #include <pongbot/JointGoal.h>
+#include <pongbot/WristGoal.h>
 
 #define TORQUE_ENABLE   1
 #define TORQUE_DISABLE  0
@@ -14,11 +15,24 @@
 
 uint32_t joint_pos[4];
 // init values with zero config
-uint32_t goal_pos[4] = {512, 819, 819, 512};
+uint32_t goal_pos[3] = {512, 819, 819};
+uint32_t wrist_goal = 512;
+
+// Get all parameters from the yaml config file
+std::string DEVICENAME;
+int DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE, BAUDRATE;
+float PROTOCOL_VERSION;
+int ADDR_TORQUE_ENABLE, ADDR_GOAL_POSITION, ADDR_PRESENT_POSITION, ADDR_SPEED;
+int JOINT_PAN_ID, JOINT_TILT_ID, JOINT_ELBOW_ID, JOINT_PADDLE_ID;
+int JOINT_PAN_ZERO_CONFIG, JOINT_TILT_ZERO_CONFIG, JOINT_ELBOW_ZERO_CONFIG, JOINT_PADDLE_ZERO_CONFIG;
+int JOINT_PAN_SPEED, JOINT_TILT_SPEED, JOINT_ELBOW_SPEED, JOINT_PADDLE_SPEED;
 
 // Function prototypes
 void checkCommResult(int dxl_comm_result, dynamixel::PacketHandler *packetHandler, uint8_t dxl_error);
-void updateGoal(const pongbot::JointGoal::ConstPtr& msg);
+void updateGoalArm(const pongbot::JointGoal::ConstPtr& msg);
+void updateGoalWrist(const pongbot::WristGoal::ConstPtr& msg);
+void getJointPos(dynamixel::PacketHandler* packetHandler, dynamixel::PortHandler* portHandler, int dxl_comm_result, uint8_t dxl_error);
+void setJointPos(dynamixel::PacketHandler* packetHandler, dynamixel::PortHandler* portHandler, int dxl_comm_result, uint8_t dxl_error);
 
 int main(int argc, char** argv)
 {
@@ -27,14 +41,6 @@ int main(int argc, char** argv)
 
     ros::NodeHandle n;
 
-    // Get all parameters from the yaml config file
-    std::string DEVICENAME;
-    int DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE, BAUDRATE;
-    float PROTOCOL_VERSION;
-    int ADDR_TORQUE_ENABLE, ADDR_GOAL_POSITION, ADDR_PRESENT_POSITION, ADDR_SPEED;
-    int JOINT_PAN_ID, JOINT_TILT_ID, JOINT_ELBOW_ID, JOINT_PADDLE_ID;
-    int JOINT_PAN_ZERO_CONFIG, JOINT_TILT_ZERO_CONFIG, JOINT_ELBOW_ZERO_CONFIG, JOINT_PADDLE_ZERO_CONFIG;
-    int JOINT_PAN_SPEED, JOINT_TILT_SPEED, JOINT_ELBOW_SPEED, JOINT_PADDLE_SPEED;
 
     n.getParam("usb_port", DEVICENAME);
     n.getParam("dxl_minimum_position_value", DXL_MINIMUM_POSITION_VALUE);
@@ -125,37 +131,28 @@ int main(int argc, char** argv)
 
 
     //subcribe to joint_goal topic to get goal_pos
-    ros::Subscriber sub = n.subscribe("joint_goal", 1000, updateGoal);
+    ros::Subscriber arm_sub = n.subscribe("arm_goal", 1000, updateGoalArm);
+    ros::Subscriber wristsub = n.subscribe("wrist_goal", 1000, updateGoalWrist);
+    // publish the present position of motors
+    ros::Publisher chatter_pub = n.advertise<pongbot::JointGoal>("joint_pos", 1000);
 
     int count = 0;
     ros::Rate r(100.0);
     while(n.ok()){
-        // Read control pan motor present position
-        dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[0], &dxl_error);
-        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+        // Read and store joint positions
+        getJointPos(packetHandler, portHandler, dxl_comm_result, dxl_error);
 
-        dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[1], &dxl_error);
-        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+        pongbot::JointGoal msg;
 
-        dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[2], &dxl_error);
-        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+        msg.joints.push_back(joint_pos[0]);
+        msg.joints.push_back(joint_pos[1]);
+        msg.joints.push_back(joint_pos[2]);
+        msg.joints.push_back(joint_pos[3]);
 
-        dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[3], &dxl_error);
-        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+        chatter_pub.publish(msg);
 
-
-        // Writing the goal position of the arm
-        dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_GOAL_POSITION, goal_pos[0], &dxl_error);
-        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
-
-        dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_GOAL_POSITION, goal_pos[1], &dxl_error);
-        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
-
-        dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_GOAL_POSITION, goal_pos[2], &dxl_error);
-        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
-
-        dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_GOAL_POSITION, goal_pos[3], &dxl_error);
-        checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+        // Writing the goal position of the entire arm
+        setJointPos(packetHandler, portHandler, dxl_comm_result, dxl_error);
 
         count++;
         ros::spinOnce();
@@ -182,7 +179,50 @@ void checkCommResult(int dxl_comm_result, dynamixel::PacketHandler *packetHandle
     }
 }
 
-void updateGoal(const pongbot::JointGoal::ConstPtr& msg){
-    for (size_t i=0; i<NUM_JOINTS; i++)
+/** Callback function for getting the goal position from subscribed topic
+ * */
+void updateGoalArm(const pongbot::JointGoal::ConstPtr& msg){
+    //read for all except wrist motor
+    for (size_t i=0; i<NUM_JOINTS-1; i++)
         goal_pos[i] = msg->joints.at(i);
+}
+
+/** Callback function for getting the goal wrist position from subscribed topic
+ * */
+void updateGoalWrist(const pongbot::WristGoal::ConstPtr& msg){
+    wrist_goal = msg->wrist_goal;
+}
+
+/** Reads the position of all the joints and puts them into joint_pos[]
+ * */
+void getJointPos(dynamixel::PacketHandler* packetHandler, dynamixel::PortHandler* portHandler, int dxl_comm_result, uint8_t dxl_error)
+{
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[0], &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[1], &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[2], &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_PRESENT_POSITION, (uint32_t*)&joint_pos[3], &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+}
+
+/** Write out goal positions for each joint
+ * */
+void setJointPos(dynamixel::PacketHandler* packetHandler, dynamixel::PortHandler* portHandler, int dxl_comm_result, uint8_t dxl_error)
+{
+    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_GOAL_POSITION, goal_pos[0], &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_GOAL_POSITION, goal_pos[1], &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_GOAL_POSITION, goal_pos[2], &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_GOAL_POSITION, wrist_goal, &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
 }

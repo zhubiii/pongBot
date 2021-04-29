@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="pongbot" name="dummy_publish" type="dummy_publish"
+    output="screen"/>
+</launch>

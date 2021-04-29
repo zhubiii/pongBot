@@ -6,7 +6,4 @@
   <node pkg="pongbot" name="pongbot_driver" type="pongbot_driver"
     output="screen"/>
 
-  <node pkg="pongbot" name="dummy_publish" type="dummy_publish"
-    output="screen"/>
-
 </launch>

@@ -28,14 +28,14 @@ joint_tilt:
   ID: 2
   zero_config: 819
   speed: 200
-  cw_compliance_slope: 32
-  ccw_compliance_slope: 32
+  cw_compliance_slope: 144
+  ccw_compliance_slope: 144
 joint_elbow:
   ID: 3
   zero_config: 819
   speed: 200
-  cw_compliance_slope: 32
-  ccw_compliance_slope: 32
+  cw_compliance_slope: 64
+  ccw_compliance_slope: 64
 joint_paddle:
   ID: 4
   zero_config: 512

@@ -15,7 +15,7 @@
 
 uint32_t joint_pos[4];
 // init values with zero config
-uint32_t goal_pos[3] = {512, 819, 819};
+uint32_t goal_pos[3] = {512, 750, 819};
 uint32_t wrist_goal = 512;
 
 // Get all parameters from the yaml config file

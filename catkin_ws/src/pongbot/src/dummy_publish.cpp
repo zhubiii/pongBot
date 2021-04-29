@@ -25,25 +25,26 @@ int main(int argc, char **argv)
   bool plus = true;
   int count = 0;
   int angle[4] = {joint_pos[0],joint_pos[1],joint_pos[2],joint_pos[3]};
+  int accl = 1;
   while (ros::ok())
   {
     pongbot::JointGoal armmsg;
     pongbot::WristGoal wristmsg;
 
-    if ((count%250==0 && count!=0)){
+    if ((count%(200/accl)==0 && count!=0)){
         plus = !plus;
     }
 
     if (count > 0) {
-        armmsg.joints.push_back(angle[0]+=1);
-        armmsg.joints.push_back(angle[1]-=1);
-        armmsg.joints.push_back(angle[2]-=1);
-        wristmsg.wrist_goal = angle[3]+=1;
+        armmsg.joints.push_back(angle[0]+=(1*accl));
+        armmsg.joints.push_back(angle[1]-=(1*accl));
+        armmsg.joints.push_back(angle[2]-=(0*accl));
+        wristmsg.wrist_goal = angle[3]+=(1*accl);
     }else{
-        armmsg.joints.push_back(angle[0]-=1);
-        armmsg.joints.push_back(angle[1]+=1);
-        armmsg.joints.push_back(angle[2]+=1);
-        wristmsg.wrist_goal = angle[3]-=1;
+        armmsg.joints.push_back(angle[0]-=(1*accl));
+        armmsg.joints.push_back(angle[1]+=(1*accl));
+        armmsg.joints.push_back(angle[2]+=(0*accl));
+        wristmsg.wrist_goal = angle[3]-=(1*accl);
     }
 
     /**

@@ -22,10 +22,12 @@ uint32_t wrist_goal = 512;
 std::string DEVICENAME;
 int DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE, BAUDRATE;
 float PROTOCOL_VERSION;
-int ADDR_TORQUE_ENABLE, ADDR_GOAL_POSITION, ADDR_PRESENT_POSITION, ADDR_SPEED;
+int ADDR_TORQUE_ENABLE, ADDR_GOAL_POSITION, ADDR_PRESENT_POSITION, ADDR_SPEED, ADDR_CW_COMPLIANCE_SLOPE, ADDR_CCW_COMPLIANCE_SLOPE;
 int JOINT_PAN_ID, JOINT_TILT_ID, JOINT_ELBOW_ID, JOINT_PADDLE_ID;
 int JOINT_PAN_ZERO_CONFIG, JOINT_TILT_ZERO_CONFIG, JOINT_ELBOW_ZERO_CONFIG, JOINT_PADDLE_ZERO_CONFIG;
 int JOINT_PAN_SPEED, JOINT_TILT_SPEED, JOINT_ELBOW_SPEED, JOINT_PADDLE_SPEED;
+int JOINT_PAN_CCW_COMPLIANCE_SLOPE, JOINT_TILT_CCW_COMPLIANCE_SLOPE, JOINT_ELBOW_CCW_COMPLIANCE_SLOPE, JOINT_PADDLE_CCW_COMPLIANCE_SLOPE;
+int JOINT_PAN_CW_COMPLIANCE_SLOPE, JOINT_TILT_CW_COMPLIANCE_SLOPE, JOINT_ELBOW_CW_COMPLIANCE_SLOPE, JOINT_PADDLE_CW_COMPLIANCE_SLOPE;
 
 // Function prototypes
 void checkCommResult(int dxl_comm_result, dynamixel::PacketHandler *packetHandler, uint8_t dxl_error);
@@ -51,6 +53,8 @@ int main(int argc, char** argv)
     n.getParam("addr_goal_position", ADDR_GOAL_POSITION);
     n.getParam("addr_present_position", ADDR_PRESENT_POSITION);
     n.getParam("addr_speed", ADDR_SPEED);
+    n.getParam("addr_cw_compliance_slope", ADDR_CW_COMPLIANCE_SLOPE);
+    n.getParam("addr_ccw_compliance_slope", ADDR_CCW_COMPLIANCE_SLOPE);
     n.getParam("joint_pan/ID", JOINT_PAN_ID);
     n.getParam("joint_tilt/ID", JOINT_TILT_ID);
     n.getParam("joint_elbow/ID", JOINT_ELBOW_ID);
@@ -63,6 +67,14 @@ int main(int argc, char** argv)
     n.getParam("joint_tilt/speed", JOINT_TILT_SPEED);
     n.getParam("joint_elbow/speed", JOINT_ELBOW_SPEED);
     n.getParam("joint_paddle/speed", JOINT_PADDLE_SPEED);
+    n.getParam("joint_pan/ccw_compliance_slope", JOINT_PAN_CCW_COMPLIANCE_SLOPE);
+    n.getParam("joint_tilt/ccw_compliance_slope", JOINT_TILT_CCW_COMPLIANCE_SLOPE);
+    n.getParam("joint_elbow/ccw_compliance_slope", JOINT_ELBOW_CCW_COMPLIANCE_SLOPE);
+    n.getParam("joint_paddle/ccw_compliance_slope", JOINT_PADDLE_CCW_COMPLIANCE_SLOPE);
+    n.getParam("joint_pan/cw_compliance_slope", JOINT_PAN_CW_COMPLIANCE_SLOPE);
+    n.getParam("joint_tilt/cw_compliance_slope", JOINT_TILT_CW_COMPLIANCE_SLOPE);
+    n.getParam("joint_elbow/cw_compliance_slope", JOINT_ELBOW_CW_COMPLIANCE_SLOPE);
+    n.getParam("joint_paddle/cw_compliance_slope", JOINT_PADDLE_CW_COMPLIANCE_SLOPE);
 
     // Initialize PortHandler instance
     // Set the port path
@@ -129,6 +141,32 @@ int main(int argc, char** argv)
     checkCommResult(dxl_comm_result, packetHandler, dxl_error);
     ROS_INFO("Initialized motor speed \n");
 
+    // Change PID controls to allow incremental moves
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_CCW_COMPLIANCE_SLOPE, JOINT_PAN_CCW_COMPLIANCE_SLOPE, &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_CCW_COMPLIANCE_SLOPE, JOINT_TILT_CCW_COMPLIANCE_SLOPE, &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_CCW_COMPLIANCE_SLOPE, JOINT_ELBOW_CCW_COMPLIANCE_SLOPE, &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_CCW_COMPLIANCE_SLOPE, JOINT_PADDLE_CCW_COMPLIANCE_SLOPE, &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+    ROS_INFO("Initialized CCW Compliance Slope \n");
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_PAN_ID, ADDR_CW_COMPLIANCE_SLOPE, JOINT_PAN_CW_COMPLIANCE_SLOPE, &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_TILT_ID, ADDR_CW_COMPLIANCE_SLOPE, JOINT_TILT_CW_COMPLIANCE_SLOPE, &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_ELBOW_ID, ADDR_CW_COMPLIANCE_SLOPE, JOINT_ELBOW_CW_COMPLIANCE_SLOPE, &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, JOINT_PADDLE_ID, ADDR_CW_COMPLIANCE_SLOPE, JOINT_PADDLE_CW_COMPLIANCE_SLOPE, &dxl_error);
+    checkCommResult(dxl_comm_result, packetHandler, dxl_error);
+    ROS_INFO("Initialized CW Compliance Slope \n");
 
     //subcribe to joint_goal topic to get goal_pos
     ros::Subscriber arm_sub = n.subscribe("arm_goal", 1000, updateGoalArm);

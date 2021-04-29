@@ -7,6 +7,8 @@ addr_torque_enable: 24
 addr_goal_position: 30
 addr_present_position: 36
 addr_speed: 32
+addr_cw_compliance_slope: 28
+addr_ccw_compliance_slope: 29
 
 # AX-12A min max
 dxl_minimum_position_value: 0
@@ -19,16 +21,24 @@ protocol_version: 1.0
 joint_pan:
   ID: 1
   zero_config: 512
-  speed: 100
+  speed: 200
+  cw_compliance_slope: 32
+  ccw_compliance_slope: 32
 joint_tilt:
   ID: 2
   zero_config: 819
-  speed: 100
+  speed: 200
+  cw_compliance_slope: 32
+  ccw_compliance_slope: 32
 joint_elbow:
   ID: 3
   zero_config: 819
-  speed: 100
+  speed: 200
+  cw_compliance_slope: 32
+  ccw_compliance_slope: 32
 joint_paddle:
   ID: 4
   zero_config: 512
-  speed: 100
+  speed: 200
+  cw_compliance_slope: 32
+  ccw_compliance_slope: 32

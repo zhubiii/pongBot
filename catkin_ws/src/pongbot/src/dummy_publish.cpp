@@ -20,19 +20,32 @@ int main(int argc, char **argv)
   ros::Publisher wrist_pub = n.advertise<pongbot::WristGoal>("wrist_goal", 1000);
   ros::Subscriber sub = n.subscribe("joint_pos", 1000, updatePos);
 
-  ros::Rate r(10.0);
+  ros::Rate r(100.0);
 
+  bool plus = true;
   int count = 0;
+  int angle[4] = {joint_pos[0],joint_pos[1],joint_pos[2],joint_pos[3]};
   while (ros::ok())
   {
     pongbot::JointGoal armmsg;
-
-    armmsg.joints.push_back(joint_pos[0]+1);
-    armmsg.joints.push_back(joint_pos[1]-50);
-    armmsg.joints.push_back(joint_pos[2]-1);
-
     pongbot::WristGoal wristmsg;
-    wristmsg.wrist_goal = joint_pos[3]+20;
+
+    if ((count%250==0 && count!=0)){
+        plus = !plus;
+    }
+
+    if (count > 0) {
+        armmsg.joints.push_back(angle[0]+=1);
+        armmsg.joints.push_back(angle[1]-=1);
+        armmsg.joints.push_back(angle[2]-=1);
+        wristmsg.wrist_goal = angle[3]+=1;
+    }else{
+        armmsg.joints.push_back(angle[0]-=1);
+        armmsg.joints.push_back(angle[1]+=1);
+        armmsg.joints.push_back(angle[2]+=1);
+        wristmsg.wrist_goal = angle[3]-=1;
+    }
+
     /**
      * The publish() function is how you send messages. The parameter
      * is the message object. The type of this object must agree with the type
@@ -46,7 +59,11 @@ int main(int argc, char **argv)
     ros::spinOnce();
 
     r.sleep();
-    count++;
+    if (plus){
+        count++;
+    }else{
+        count--;
+    }
   }
   return 0;
 }

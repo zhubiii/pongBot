@@ -2,8 +2,9 @@
 #include <pongbot/JointGoal.h>
 #include <stdlib.h>
 #include <iostream>
-uint32_t joint_pos[4];
 
+std::vector<double> thetalist;;
+uint32_t joint_pos[4];
 
 void updatePos(const pongbot::JointGoal::ConstPtr& msg);
 std::vector<std::vector<double>> matrixMult(std::vector<std::vector<double>> a, std::vector<std::vector<double>> b);
@@ -48,40 +49,42 @@ int main(int argc, char **argv)
   std::vector<double> B3 {1, 0, 0, 0, -235.6, -25};
   std::vector<std::vector<double>> Blist2 {{B1},{B2},{B3}};
 
-  std::vector<double> thetalist {0, 0, 0};
+  thetalist = {M_PI, M_PI, M_PI};
 
   int count = 0;
-  ros::Rate r(100.0);
+  ros::Rate r(10.0);
   while (ros::ok())
   {
     pongbot::JointGoal armmsg;
 
     // T will be the homogeneous transfrom matrix output by fkin
     std::vector<std::vector<double>> T = M;
-    std::vector<std::vector<double>> tmp1;
     std::vector<std::vector<double>> tmp0;
+    std::vector<std::vector<double>> tmp1;
     std::vector<std::vector<double>> se3mat;
     
     //forward kinematics
     for (size_t i=0; i<thetalist.size(); i++)
     {
-        se3mat = VecTose3(Blist2[i]);
-        for (size_t j=0; j<se3mat.size(); j++)
-            for (size_t k=0; k<se3mat.at(i).size(); k++)
-                se3mat[j][k] *= thetalist[i];
+        std::vector<double> tmp2 (6, -1);
+        for (size_t j=0; j<Blist2[i].size(); j++)
+            tmp2[j] = Blist2[i][j] * thetalist[i];
+
+        se3mat = VecTose3(tmp2);
         tmp0 = T;
         tmp1 = MatrixExp6(se3mat);
         T = matrixMult(tmp0, tmp1);
+        ROS_INFO("\n%f   %f   %f   %f\n"
+                    "%f   %f   %f   %f\n"
+                    "%f   %f   %f   %f\n"
+                    "%f   %f   %f   %f\n"
+                ,  T[0][0],T[0][1],T[0][2],T[0][3],
+                    T[1][0],T[1][1],T[1][2],T[1][3],
+                    T[2][0],T[2][1],T[2][2],T[2][3],
+                    T[3][0],T[3][1],T[3][2],T[3][3]);
     }
+    exit(0);
 
-    ROS_INFO("\n%f   %f   %f   %f\n"
-                "%f   %f   %f   %f\n"
-                "%f   %f   %f   %f\n"
-                "%f   %f   %f   %f\n"
-            ,  T[0][0],T[0][1],T[0][2],T[0][3],
-                T[1][0],T[1][1],T[1][2],T[1][3],
-                T[2][0],T[2][1],T[2][2],T[2][3],
-                T[3][0],T[3][1],T[3][2],T[3][3]);
 
     ros::spinOnce();
     r.sleep();
@@ -130,7 +133,7 @@ std::vector<double> so3ToVec(std::vector<std::vector<double>> so3mat)
 
 std::vector<std::vector<double>> MatrixExp3(std::vector<std::vector<double>> so3mat)
 {
-    std::vector<std::vector<double>> R;
+    std::vector<std::vector<double>> R (3, std::vector<double> (3, -1));
     std::vector<double> omgtheta = so3ToVec(so3mat);
     R = {
             {1, 0, 0},
@@ -184,21 +187,26 @@ std::vector<std::vector<double>> MatrixExp6(std::vector<std::vector<double>> se3
         //first 3 are omghat last element is theta
         std::vector<double> omghat_theta = AxisAng3(omgtheta);
         double theta = omghat_theta.back();
-        std::vector<std::vector<double>> omgmat = se3mat;
-        std::vector<std::vector<double>> Rinput;
+        std::vector<std::vector<double>> omgmat {
+                                                    {se3mat[0][0], se3mat[0][1], se3mat[0][2]},
+                                                    {se3mat[1][0], se3mat[1][1], se3mat[1][2]},
+                                                    {se3mat[2][0], se3mat[2][1], se3mat[2][2]},
+                                                };
+        std::vector<std::vector<double>> Rin (3, std::vector<double> (3, -1));
         //divide the rotation by theta
         for (size_t i=0; i<3; i++)
             for (size_t j=0; j<3; j++) {
-                Rinput[i][j] = omgmat[i][j];
+                Rin[i][j] = omgmat[i][j];
                 omgmat[i][j] /= theta;
             }
 
         double sintheta = sin(theta);
         double costheta = cos(theta);
-        std::vector<std::vector<double>> omgmat_sqrd = matrixMult(omgmat, omgmat);
+        std::vector<std::vector<double>> omgmat_sqrd = omgmat;
+        std::vector<std::vector<double>> omgmatOG = omgmat;
 
         //T matrix
-        std::vector<std::vector<double>> R = MatrixExp3(Rinput);
+        std::vector<std::vector<double>> R = MatrixExp3(Rin);
         std::vector<std::vector<double>> Itheta {
                                                 {theta, 0, 0},
                                                 {0, theta, 0},
@@ -211,6 +219,7 @@ std::vector<std::vector<double>> MatrixExp6(std::vector<std::vector<double>> se3
                 omgmat[i][j] *= tmp;
                 omgmat_sqrd[i][j] *= tmp1;
             }
+        omgmat_sqrd = matrixMult(omgmat_sqrd, omgmatOG);
 
         for (size_t i=0; i<omgmat_sqrd.size(); i++) 
             for (size_t j=0; j<omgmat_sqrd.at(i).size(); j++)
@@ -218,11 +227,10 @@ std::vector<std::vector<double>> MatrixExp6(std::vector<std::vector<double>> se3
                 
         std::vector<double> tmp3 = {se3mat[0][3]/theta, se3mat[1][3]/theta, se3mat[2][3]/theta};
         
-        std::vector<double> tmp4 {0,0,0,0};
+        std::vector<double> tmp4 {0,0,0};
         for (size_t i=0; i<Itheta.size(); i++)
-            for (size_t j=0; j<Itheta.at(i).size(); j++)
-                for (size_t k=0; k<tmp3.size(); k++)
-                    tmp4[i] += Itheta[i][k] * tmp3[k];
+            for (size_t k=0; k<tmp3.size(); k++)
+                tmp4[i] += Itheta[i][k] * tmp3[k];
 
         T = {
                 {R[0][0], R[0][1], R[0][2], tmp4[0]},
@@ -244,7 +252,7 @@ double Norm(std::vector<double> V)
 {
     double sum;
     for (size_t i=0; i<V.size(); i++)
-        sum += V.at(i);
+        sum += pow(V.at(i),2);
 
     return sqrt(sum);
 }

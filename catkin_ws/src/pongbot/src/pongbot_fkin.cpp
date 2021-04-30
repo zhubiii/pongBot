@@ -58,7 +58,8 @@ int main(int argc, char **argv)
 
     // T will be the homogeneous transfrom matrix output by fkin
     std::vector<std::vector<double>> T = M;
-    std::vector<std::vector<double>> tmp;
+    std::vector<std::vector<double>> tmp1;
+    std::vector<std::vector<double>> tmp0;
     std::vector<std::vector<double>> se3mat;
     
     //forward kinematics
@@ -68,15 +69,15 @@ int main(int argc, char **argv)
         for (size_t j=0; j<se3mat.size(); j++)
             for (size_t k=0; k<se3mat.at(i).size(); k++)
                 se3mat[j][k] *= thetalist[i];
-        ROS_INFO("WERE ALIVE STILL");
-        tmp = MatrixExp6(se3mat);
-        T = matrixMult(T, tmp);
+        tmp0 = T;
+        tmp1 = MatrixExp6(se3mat);
+        T = matrixMult(tmp0, tmp1);
     }
 
-    ROS_INFO("  %d   %d   %d   %d\n"
-                "%d   %d   %d   %d\n"
-                "%d   %d   %d   %d\n"
-                "%d   %d   %d   %d\n"
+    ROS_INFO("\n%f   %f   %f   %f\n"
+                "%f   %f   %f   %f\n"
+                "%f   %f   %f   %f\n"
+                "%f   %f   %f   %f\n"
             ,  T[0][0],T[0][1],T[0][2],T[0][3],
                 T[1][0],T[1][1],T[1][2],T[1][3],
                 T[2][0],T[2][1],T[2][2],T[2][3],
@@ -260,29 +261,27 @@ std::vector<double> AxisAng3 (std::vector<double> expc3)
 
 std::vector<std::vector<double>> matrixMult(std::vector<std::vector<double>> a, std::vector<std::vector<double>> b)
 {
-  std::vector<std::vector<double>> c;
+  std::vector<std::vector<double>> c(a.size(), std::vector<double>(b.at(0).size(), -1));
   int N = a.size();
-  // Matrix multiplication with loop unrolling 4x1
   int i, j,k;
-  int limit = N-3;//limit is length - (#unroll -1)
-  double acc; //accumulator
+  int limit = N-1;
+  double acc0; //two accumulators
+  double acc1;
+
   for(i=0; i<N; i++)
     for(j=0; j<N; j++){
-      acc = 0;
-      for(k=0; k<limit; k+=4){
-        acc += a[i][k] * b[k][j]; //compute 4 "unrolls" per loop
-        acc += a[i][k+1] * b[k+1][j];
-        acc += a[i][k+2] * b[k+2][j];
-        acc += a[i][k+3] * b[k+3][j];
+      acc0 = 0;
+      acc1 = 0;
+      for(k=0; k<limit; k+=2){
+        acc0 += a[i][k] * b[k][j]; //stores the "original"
+        acc1 += a[i][k+1] * b[k+1][j]; //stores the "unroll"
       }
-
       //compute finishing cases
       for (; k<N; k++) {
-        acc += a[i][k] * b[k][j];
+        acc0 += a[i][k] * b[k][j];
       }
 
-      //assign the value to c
-      c[i][j] = acc;
+      c[i][j] = acc0 + acc1; //we add the accumulators
     }
   return c;
 }

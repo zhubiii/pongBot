@@ -4,7 +4,6 @@
 #include <iostream>
 
 std::vector<double> thetalist;;
-uint32_t joint_pos[4];
 
 void updatePos(const pongbot::JointGoal::ConstPtr& msg);
 std::vector<std::vector<double>> matrixMult(std::vector<std::vector<double>> a, std::vector<std::vector<double>> b);
@@ -97,8 +96,8 @@ int main(int argc, char **argv)
  * */
 void updatePos(const pongbot::JointGoal::ConstPtr& msg)
 {
-    for (size_t i=0; i<4; i++)
-        joint_pos[i] = msg->joints.at(i);
+    for (size_t i=0; i<3; i++)
+        thetalist[i] = msg->joints.at(i);
 }
 
 

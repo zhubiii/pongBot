@@ -213,6 +213,8 @@ include_directories(
 add_executable(pongbot_demo src/pongbot_demo.cpp)
 add_executable(pongbot_driver src/pongbot_driver.cpp)
 add_executable(dummy_publish src/dummy_publish.cpp)
+add_executable(pongbot_fkin src/pongbot_fkin.cpp)
 target_link_libraries(pongbot_demo ${catkin_LIBRARIES})
 target_link_libraries(pongbot_driver ${catkin_LIBRARIES})
 target_link_libraries(dummy_publish ${catkin_LIBRARIES})
+target_link_libraries(pongbot_fkin ${catkin_LIBRARIES})

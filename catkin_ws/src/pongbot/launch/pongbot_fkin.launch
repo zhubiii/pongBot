@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="pongbot" name="pongbot_fkin" type="pongbot_fkin"
+    output="screen"/>
+</launch>

@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 
   ros::Publisher arm_pub = n.advertise<pongbot::JointGoal>("arm_goal", 1000);
   ros::Publisher wrist_pub = n.advertise<pongbot::WristGoal>("wrist_goal", 1000);
-  ros::Subscriber arm_sub = n.subscribe("joint_goal_theta", 1000, updatePosArm);
+  ros::Subscriber arm_sub = n.subscribe("arm_goal_theta", 1000, updatePosArm);
   ros::Subscriber wrist_sub = n.subscribe("wrist_goal_theta", 1000, updatePosWrist);
 
   ros::Rate r(100.0);

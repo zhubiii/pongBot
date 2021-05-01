@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <iostream>
 
-std::vector<double> thetalist;;
+const double RADIAN = M_PI/180;
+const double DEGREE = .29;
+std::vector<double> thetalist(3, -1);
 
 void updatePos(const pongbot::JointGoal::ConstPtr& msg);
 std::vector<std::vector<double>> matrixMult(std::vector<std::vector<double>> a, std::vector<std::vector<double>> b);
@@ -18,6 +20,9 @@ bool NearZero(double near);
 double Norm(std::vector<double> V);
 std::vector<double> AxisAng3 (std::vector<double> expc3);
 
+int JOINT_PAN_ZERO_CONFIG, JOINT_TILT_ZERO_CONFIG, JOINT_ELBOW_ZERO_CONFIG;
+int zero_offset[3];
+
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "pongbot_fkin");
@@ -25,6 +30,14 @@ int main(int argc, char **argv)
   ros::NodeHandle n;
 
   ros::Subscriber sub = n.subscribe("joint_pos", 1000, updatePos);
+
+  n.getParam("joint_pan/zero_config", JOINT_PAN_ZERO_CONFIG);
+  n.getParam("joint_tilt/zero_config", JOINT_TILT_ZERO_CONFIG);
+  n.getParam("joint_elbow/zero_config", JOINT_ELBOW_ZERO_CONFIG);
+
+  zero_offset[0] = JOINT_PAN_ZERO_CONFIG * DEGREE;
+  zero_offset[1] = JOINT_TILT_ZERO_CONFIG * DEGREE;
+  zero_offset[2] = JOINT_ELBOW_ZERO_CONFIG * DEGREE;
 
   // M matrix for the arm
   std::vector<std::vector<double>> M    {
@@ -34,21 +47,11 @@ int main(int argc, char **argv)
                                             {0, 0, 0, 1}
                                         };
 
-  std::vector<std::vector<double>> Blist {
-                                            {0,         1,          1},
-                                            {1,         0,          0},
-                                            {0,         0,          0},
-                                            {379.93,    0,          0},
-                                            {0,         -379.93,    -235.6},
-                                            {0,         -65.745,    -25}
-                                        };
-                                            
   std::vector<double> B1 {0, 1, 0, 379.93, 0, 0};
-  std::vector<double> B2 {1, 0, 0, 0, -379.93, -65.745};
-  std::vector<double> B3 {1, 0, 0, 0, -235.6, -25};
+  std::vector<double> B2 {-1, 0, 0, 0, 379.93, 65.745};
+  std::vector<double> B3 {-1, 0, 0, 0, 235.6, 25};
   std::vector<std::vector<double>> Blist2 {{B1},{B2},{B3}};
 
-  thetalist = {M_PI, M_PI, M_PI};
 
   int count = 0;
   ros::Rate r(10.0);
@@ -95,8 +98,17 @@ int main(int argc, char **argv)
  * */
 void updatePos(const pongbot::JointGoal::ConstPtr& msg)
 {
-    for (size_t i=0; i<3; i++)
-        thetalist[i] = msg->joints.at(i);
+    // need to convert joint pos (0-1023) to radian angle
+    // each interval is .29 degrees
+    // finally subtract an offset so that it matches the dxl motors definition of 0 degrees
+    // Joint 2 (tilt) is interesting because the body moves the arm rather than the wheel
+    for (size_t i=0; i<3; i++) {
+        if (i==1)
+            thetalist[i] = ((msg->joints.at(i) * DEGREE) + zero_offset[i]) * RADIAN;
+        else
+            thetalist[i] = ((msg->joints.at(i) * DEGREE) - zero_offset[i]) * RADIAN;
+
+    }
 }
 
 

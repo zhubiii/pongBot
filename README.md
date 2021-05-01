@@ -1,7 +1,8 @@
 # pongBot
 Progress on building a robot that can bounce a ping-pong ball forever...maybe more?
 
-- [Progress](#Progress)
+- [Methods](#Methods)
+- [Build Progress](#Build-Progress)
   - [VERSION1](#VERSION1)
     - [Controller-Agent Unit](#Controller-Agent-Unit)
     - [Base](#Base)
@@ -12,8 +13,13 @@ Progress on building a robot that can bounce a ping-pong ball forever...maybe mo
 - [Problems Encountered](#Problems-Encountered!)
 - [TODO](#TODO)
 
+# Methods
+![0config_side](./images/0config_side.jpg)
+## Forward Kinematics
+![Fkin](./images/Fkin.jpg)
 
-# Progress
+
+# Build Progress
 ## VERSION1
 ### Controller-Agent Unit
 - There are two of these units, one is the controller and one is the agent. The agent will always mimic the pan/tilt position of the controller   
@@ -49,6 +55,16 @@ Progress on building a robot that can bounce a ping-pong ball forever...maybe mo
 -  The end effector is a two piece 3-D printed paddle that attaches to a motor for angle control
 
 ## VERSION2
+- The clear parts represents the reprints in PLA. I made them slightly thicker to reduce the wobble problem. In between the 
+turntable and base2, I also put support beams. These were intended to have ball bearings on top but frankly I did not have
+any on me at the time. I discovered, however, that the plastics are smooth enough to support and slide with minimal frictional resistance
+- Lastly I was able to get a half-inch thick steel plate (thanks dad) to bolt the arm's base to. I drilled and tapped holes into it so 
+now the arm will not do backflips everytime I attempt to move the end-effector
+
+.|.
+:-:|:-:
+![V2](./images/V2.jpg) | ![V2 close](./images/V2close.jpg)
+
 
 # Problems Encountered!
 - WOBBLE
@@ -69,8 +85,8 @@ Progress on building a robot that can bounce a ping-pong ball forever...maybe mo
 - [x] Write driver code to be able to control the robot in a controller/agent configuration
   -  See the "controller_agent" package in the catkin_ws
 - [x] Combine all motors into a single robot arm
-  - [ ] DETOUR: Redesign turntable and base2 in PLA to fix wobble. Also design ball-bearing support beams
-- [ ] Figure out coordinate frame transformations of each necessary part (base, joints, end effector)
+  - [x] DETOUR: Redesign turntable and base2 in PLA to fix wobble. Also design ball-bearing support beams
+- [x] Figure out coordinate frame transformations of each necessary part (base, joints, end effector)
 - [ ] Write code to do a "show floor" run of all of the robots capabilities
 - [ ] Use OpenCV to identify and get pose estimation of a ping pong ball
 - [ ] Figure out coordinate frame transforamtions of camera to robot

@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="pongbot" name="pongbot_theta_to_pos" type="pongbot_theta_to_pos"
+    output="screen"/>
+</launch>

@@ -1,1 +1,2 @@
 uint32 wrist_goal
+float64 wrist_goal_theta

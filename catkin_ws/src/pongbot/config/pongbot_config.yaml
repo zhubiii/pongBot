@@ -24,21 +24,29 @@ joint_pan:
   speed: 200
   cw_compliance_slope: 32
   ccw_compliance_slope: 32
+  min: 0
+  max: 1023
 joint_tilt:
   ID: 2
   zero_config: 819
   speed: 200
   cw_compliance_slope: 144
   ccw_compliance_slope: 144
+  min: 200
+  max: 820
 joint_elbow:
   ID: 3
   zero_config: 819
   speed: 200
   cw_compliance_slope: 64
   ccw_compliance_slope: 64
+  min: 300
+  max: 900
 joint_paddle:
   ID: 4
   zero_config: 512
   speed: 200
   cw_compliance_slope: 32
   ccw_compliance_slope: 32
+  min: 0
+  max: 1023

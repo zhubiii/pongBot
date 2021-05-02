@@ -41,7 +41,7 @@ joint_elbow:
   cw_compliance_slope: 64
   ccw_compliance_slope: 64
   min: 300
-  max: 900
+  max: 923
 joint_paddle:
   ID: 4
   zero_config: 512

@@ -1,4 +1,5 @@
 <launch>
+  <arg name="namespace"               default="pongbot"/>
   <node pkg="pongbot" name="dummy_publish" type="dummy_publish"
     output="screen"/>
 </launch>

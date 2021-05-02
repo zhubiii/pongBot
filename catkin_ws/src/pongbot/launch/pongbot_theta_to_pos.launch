@@ -1,4 +1,8 @@
 <launch>
+  <!-- Parameter Server from yaml config files-->
+  <rosparam file="$(find pongbot)/config/pongbot_config.yaml" />
+  <arg name="namespace"               default="pongbot"/>
+
   <node pkg="pongbot" name="pongbot_theta_to_pos" type="pongbot_theta_to_pos"
     output="screen"/>
 </launch>

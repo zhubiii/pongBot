@@ -2,6 +2,9 @@
 Progress on building a robot that can bounce a ping-pong ball forever...maybe more?
 
 - [Methods](#Methods)
+  - [Forward Kinematics](#Forward-Kinematics)
+  - [Theta offset](#Theta-offset)
+  - [ROS](#ROS)
 - [Build Progress](#Build-Progress)
   - [VERSION1](#VERSION1)
     - [Controller-Agent Unit](#Controller-Agent-Unit)
@@ -17,6 +20,10 @@ Progress on building a robot that can bounce a ping-pong ball forever...maybe mo
 ![0config_side](./images/0config_side.jpg)
 ## Forward Kinematics
 ![Fkin](./images/Fkin.jpg)
+## Theta offset
+![Theta offset](./images/Theta_offset.jpg)
+## ROS
+![Rqt_graph](./images/pongbot_rqt.png)
 
 
 # Build Progress

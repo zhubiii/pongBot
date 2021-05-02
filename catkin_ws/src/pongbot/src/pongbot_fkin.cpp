@@ -102,13 +102,13 @@ void updatePos(const pongbot::JointGoal::ConstPtr& msg)
     // each interval is .29 degrees
     // finally subtract an offset so that it matches the dxl motors definition of 0 degrees
     // Joint 2 (tilt) is interesting because the body moves the arm rather than the wheel
-    for (size_t i=0; i<3; i++) {
-        if (i==1)
-            thetalist[i] = ((msg->joints.at(i) * DEGREE) + zero_offset[i]) * RADIAN;
-        else
-            thetalist[i] = ((msg->joints.at(i) * DEGREE) - zero_offset[i]) * RADIAN;
-
-    }
+    // Okay so ^^ is not correct..
+    for (size_t i=0; i<3; i++)
+        thetalist[i] = ((msg->joints.at(i) * DEGREE) - zero_offset[i]) * RADIAN;
+        //if (i==1)
+            //thetalist[i] = ((msg->joints.at(i) * DEGREE) + zero_offset[i]) * RADIAN;
+        //else
+            //thetalist[i] = ((msg->joints.at(i) * DEGREE) - zero_offset[i]) * RADIAN;
 }
 
 

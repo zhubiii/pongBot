@@ -24,8 +24,9 @@ int main(int argc, char **argv)
   {
     pongbot::JointGoal armmsg;
     pongbot::WristGoal wristmsg;
-    for (size_t i=0; i<3; i++)
-        armmsg.joint_thetas.push_back(M_PI/6);
+    armmsg.joint_thetas.push_back(M_PI/6);
+    armmsg.joint_thetas.push_back(M_PI/6);
+    armmsg.joint_thetas.push_back(M_PI/6);
 
     wristmsg.wrist_goal_theta = M_PI/4;
 

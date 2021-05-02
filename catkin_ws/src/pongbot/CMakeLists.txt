@@ -56,6 +56,7 @@ add_message_files(
   FILES
   JointGoal.msg
   WristGoal.msg
+  HomoTransformMatrix.msg
 )
 
 ## Generate services in the 'srv' folder

@@ -1,0 +1,5 @@
+<launch>
+  <arg name="namespace"               default="pongbot"/>
+  <node pkg="pongbot" name="pongbot_wrist_driver" type="pongbot_wrist_driver"
+    output="screen"/>
+</launch>

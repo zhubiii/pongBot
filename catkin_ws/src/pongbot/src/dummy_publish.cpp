@@ -6,9 +6,6 @@
 /**
  * publish dummy joint angles to test the driver
  */
-
-void updatePos(const pongbot::JointGoal::ConstPtr& msg);
-
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "dummy_publish");

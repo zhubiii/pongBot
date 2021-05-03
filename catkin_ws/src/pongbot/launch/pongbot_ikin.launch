@@ -1,0 +1,5 @@
+<launch>
+  <arg name="namespace"               default="pongbot"/>
+  <node pkg="pongbot" name="pongbot_ikin" type="pongbot_ikin"
+    output="screen"/>
+</launch>

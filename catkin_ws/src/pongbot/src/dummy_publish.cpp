@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     armmsg.joint_thetas.push_back(M_PI/6);
     armmsg.joint_thetas.push_back(M_PI/6);
 
-    wristmsg.wrist_goal_theta = M_PI/4;
+    wristmsg.wrist_goal_theta = 0;
 
     /**
      * The publish() function is how you send messages. The parameter

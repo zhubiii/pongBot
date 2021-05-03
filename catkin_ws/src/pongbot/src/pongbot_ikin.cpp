@@ -42,7 +42,8 @@ int main(int argc, char **argv)
     theta1 = atan2(py,px);
 
     // take pos or neg?
-    theta3 = atan2(abs(sqrt(1-pow(D,2))), D);
+    double tmp = pow(D,2);
+    theta3 = atan2(sqrt(abs(1-pow(D,2))), D);
 
     s3 = sin(theta3);
     c3 = cos(theta3);
@@ -53,7 +54,7 @@ int main(int argc, char **argv)
     armmsg.joint_thetas.push_back(theta2);
     armmsg.joint_thetas.push_back(theta3);
 
-    ROS_INFO("Publishing Thetas!");
+    //ROS_INFO("Publishing Thetas!");
     arm_pub.publish(armmsg);
 
     ros::spinOnce();

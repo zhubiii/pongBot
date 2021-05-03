@@ -1,0 +1,6 @@
+<launch>
+    <include file="$(find pongbot)/launch/pongbot_driver.launch"/>
+    <include file="$(find pongbot)/launch/pongbot_trajectory_generation.launch"/>
+    <include file="$(find pongbot)/launch/pongbot_theta_to_pos.launch"/>
+    <include file="$(find pongbot)/launch/pongbot_ikin.launch"/>
+</launch>

@@ -1,0 +1,5 @@
+<launch>
+  <arg name="namespace"               default="pongbot"/>
+  <node pkg="pongbot" name="pongbot_trajectory_generation" type="pongbot_trajectory_generation"
+    output="screen"/>
+</launch>

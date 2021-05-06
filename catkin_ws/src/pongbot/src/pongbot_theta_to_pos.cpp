@@ -100,21 +100,21 @@ void convertTheta(pongbot::JointGoal* jointmsg, pongbot::WristGoal* wristmsg)
 {
     double tmp;
     for (size_t i=0; i<3; i++) {
-        if (i==1) { //the tilt joint rotates the arm with its body rather than its wheel
-            tmp = thetas[i] / RADIAN;
-            tmp -= zero_offset[i];
-            if ((tmp=abs(tmp/DEGREE)) > joint_max[i] || tmp < joint_min[i])
-                ROS_WARN("Invalid theta %f for joint %d", tmp, (int)i+1);
-            // need to figure out how to handel joint limitselse
-                jointmsg->joints.push_back((uint32_t)abs(tmp));
-        }else {
+        //if (i==1) { //the tilt joint rotates the arm with its body rather than its wheel
+            //tmp = thetas[i] / RADIAN;
+            //tmp -= zero_offset[i];
+            //if ((tmp=abs(tmp/DEGREE)) > joint_max[i] || tmp < joint_min[i])
+                //ROS_WARN("Invalid theta %f for joint %d", tmp, (int)i+1);
+            //// need to figure out how to handel joint limitselse
+                //jointmsg->joints.push_back((uint32_t)abs(tmp));
+        //}else {
             tmp = thetas[i] / RADIAN;
             tmp += zero_offset[i];
             if ((tmp=tmp/DEGREE) > joint_max[i] || tmp < joint_min[i])
                 ROS_WARN("Invalid theta %f for joint %d", tmp, (int)i+1);
             //need to figure out how to handel joint limitselse
                 jointmsg->joints.push_back((uint32_t)tmp);
-        }
+        //}
     }
 
     //convert wrist

@@ -1,0 +1,412 @@
+<?xml version="1.0"?>
+<robot name="pongbot">
+
+    <material name="grey">
+        <color rgba="1 1 1 1"/>
+    </material>
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+    <material name="white">
+        <color rgba="69 69 69 1"/>
+    </material>
+
+    <link name="steel_plate">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size=".2032 .2032 .0127"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+    </link>
+
+    <link name="base_1">
+        <visual>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base1-Body.stl"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base1-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="steel_to_base1" type="fixed">
+        <parent link="steel_plate"/>
+        <child link="base_1"/>
+        <origin xyz="0 0 .0127" />
+    </joint>
+
+    <link name="base_2">
+        <visual>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base2-Body.stl"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base2-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="base1_to_base2" type="fixed">
+        <parent link="base_1"/>
+        <child link="base_2"/>
+        <origin xyz="0 0 .0645" />
+    </joint>
+
+    <link name="pan_motor">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 .017"/>
+            <geometry>
+                <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="steel_to_pan_motor" type="fixed">
+        <parent link="steel_plate"/>
+        <child link="pan_motor"/>
+        <origin xyz="0 0 .080" />
+    </joint>
+
+    <link name="base_3_rim">
+        <visual>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base3_rim-Body.stl"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base3_rim-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="base2_to_base3_rim" type="fixed">
+        <parent link="base_2"/>
+        <child link="base_3_rim"/>
+        <origin xyz="0 0 .042" />
+    </joint>
+
+    <link name="base_3_turntable">
+        <visual>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base3_turntable-Body.stl"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base3_turntable-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="pan_joint" type="revolute">
+        <parent link="pan_motor"/>
+        <child link="base_3_turntable"/>
+        <origin xyz="0 0 0.037" />
+        <limit effort="1000.0" lower="-2.61799" upper="2.61799" velocity="0.5"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="tilt_motor">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="tilt_joint" type="revolute">
+        <parent link="base_3_turntable"/>
+        <child link="tilt_motor"/>
+        <origin rpy="1.57075 0 0 " xyz="0 0 0.026" />
+        <limit effort="1000.0" lower="0" upper="3.14159" velocity="0.5"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="rmale_link1">
+        <visual>
+            <origin rpy="3.14159 3.14159 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Male_Link1_Panel-Body.stl"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <origin rpy="3.14159 3.14159 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Male_Link1_Panel-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="tilt_to_right_link1" type="fixed">
+        <parent link="tilt_motor"/>
+        <child link="rmale_link1"/>
+        <origin rpy="0 0 0" xyz="0.091 0 -0.017" />
+    </joint>
+
+    <link name="lmale_link1">
+        <visual>
+            <origin rpy="3.14159 3.14159 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Male_Link1_Panel-Body.stl"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <origin rpy="3.14159 3.14159 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Male_Link1_Panel-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="tilt_to_left_link1" type="fixed">
+        <parent link="tilt_motor"/>
+        <child link="lmale_link1"/>
+        <origin rpy="0 0 0" xyz="0.091 0 0.017" />
+    </joint>
+
+    <link name="bfemale_link1">
+        <visual>
+            <origin rpy="1.57075 1.57075 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Female_Link1_backPanel-Body.stl"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <origin rpy="1.57075 1.57075 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Female_Link1_backPanel-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="tilt_to_back_link1" type="fixed">
+        <parent link="tilt_motor"/>
+        <child link="bfemale_link1"/>
+        <origin rpy="0 0 0" xyz="0.082 0.02 0" />
+    </joint>
+
+    <link name="ffemale_link1">
+        <visual>
+            <origin rpy="1.57075 1.57075 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Female_Link1_frontPanel-Body.stl"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <origin rpy="1.57075 1.57075 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Female_Link1_frontPanel-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="tilt_to_front_link1" type="fixed">
+        <parent link="tilt_motor"/>
+        <child link="ffemale_link1"/>
+        <origin rpy="0 0 0" xyz="0.075 -0.015 0" />
+    </joint>
+
+    <link name="elbow_motor">
+        <visual>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="tilt_to_elbow_motor" type="fixed">
+        <parent link="tilt_motor"/>
+        <child link="elbow_motor"/>
+        <origin rpy="0 0 0 " xyz="0.14433 -0.040745 0" />
+    </joint>
+
+    <link name="elbow_rot">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0.02"/>
+            <geometry>
+                <cylinder radius="0.008" length="0.001"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <joint name="elbow_joint" type="revolute">
+        <parent link="elbow_motor"/>
+        <child link="elbow_rot"/>
+        <origin rpy="0 0 0 " xyz="0 0 0" />
+        <limit effort="1000.0" lower="0" upper="-3.14159" velocity="0.5"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="left_link2">
+        <visual>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Link2_sidepanel-Body.stl"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Link2_sidepanel-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="elbow_to_left_link2" type="fixed">
+        <parent link="elbow_rot"/>
+        <child link="left_link2"/>
+        <origin rpy="0 0 0" xyz="0.06 0 .02" />
+    </joint>
+
+    <link name="right_link2">
+        <visual>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Link2_sidepanel-Body.stl"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Link2_sidepanel-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="elbow_to_right_link2" type="fixed">
+        <parent link="elbow_rot"/>
+        <child link="right_link2"/>
+        <origin rpy="0 0 0" xyz="0.06 0 -.02" />
+    </joint>
+
+    <link name="paddle_motor">
+        <visual>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="elbow_to_paddle_motor" type="fixed">
+        <parent link="elbow_rot"/>
+        <child link="paddle_motor"/>
+        <origin rpy="0 1.57075 0 " xyz="0.105 -0.025 0" />
+    </joint>
+
+    <link name="paddle_rot">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.008" length="0.001"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <joint name="paddle_joint" type="continuous">
+        <parent link="paddle_motor"/>
+        <child link="paddle_rot"/>
+        <origin rpy="0 0 0 " xyz="0 0 0.02" />
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="paddle_holder">
+        <visual>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/paddle/paddle_holder-Body.stl"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/paddle/paddle_holder-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="paddle_motor_to_paddle_holder" type="fixed">
+        <parent link="paddle_rot"/>
+        <child link="paddle_holder"/>
+        <origin rpy="0 0 0 " xyz="0 0 0" />
+    </joint>
+
+    <link name="paddle">
+        <visual>
+            <origin rpy="1.57075 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/paddle/paddle-Body.stl"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/paddle/paddle-Body.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="paddle_rot_to_paddle" type="fixed">
+        <parent link="paddle_rot"/>
+        <child link="paddle"/>
+        <origin rpy="0 0 0 " xyz="0 0 0.1106" />
+    </joint>
+</robot>

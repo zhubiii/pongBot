@@ -2,9 +2,11 @@
 Progress on building a robot that can bounce a ping-pong ball forever...maybe more?
 
 - [Methods](#Methods)
-  - [Forward Kinematics](#Forward-Kinematics)
+  - [Kinematics](#Kinematics)
   - [Theta offset](#Theta-offset)
   - [ROS](#ROS)
+  - [Simulation](#Simulation)
+    - [URDF](#URDF)
 - [Build Progress](#Build-Progress)
   - [VERSION1](#VERSION1)
     - [Controller-Agent Unit](#Controller-Agent-Unit)
@@ -18,13 +20,17 @@ Progress on building a robot that can bounce a ping-pong ball forever...maybe mo
 
 # Methods
 ![0config_side](./images/0config_side.jpg)
-## Forward Kinematics
+## Kinematics
 ![Fkin](./images/Fkin.jpg)
 ## Theta offset
 ![Theta offset](./images/Theta_offset.jpg)
 ## ROS
 ![Rqt_graph](./images/pongbot_rqt.png)
 
+## Simulation
+
+### URDF
+![URDF in Rviz](./images/rvizURDF.png)
 
 # Build Progress
 ## VERSION1
@@ -76,7 +82,10 @@ now the arm will not do backflips everytime I attempt to move the end-effector
 # Problems Encountered!
 - WOBBLE
   - There is a lot of wobble in the first fully assembled test run. The turntable and second-level base (base2) are the source of a lot of instability in the system. The shaft of the motor is much smaller than the diameter of the turntable which causes wobbling. Additionally, base2 has a "trampoline" effect
-  - Going to double the thickness of base2 and the turntable, and also look into designing ball-bearing support beams for the turntable. Will likely shift from ABS to PLA filament for these because PLA has higher rigidity 
+  - Going to double the thickness of base2 and the turntable, and also look into designing ball-bearing support beams for the table. Will likely shift from ABS to PLA filament for these because PLA has higher rigidity 
+- LIMITED DOF
+  - There is not 6DOF which makes trajectory generation difficult. We are unable to easily define the workspace of the arm and therefore cannot pick arbitrary configurations for the arm to follow. This motivates the investigation into using Reinforcement Learning to allow complex behavior
+  - Will spend time getting the robot in simulation to use as a testbed for AI controllers
 
 # TODO
 - [x] Find cool project
@@ -94,6 +103,11 @@ now the arm will not do backflips everytime I attempt to move the end-effector
 - [x] Combine all motors into a single robot arm
   - [x] DETOUR: Redesign turntable and base2 in PLA to fix wobble. Also design ball-bearing support beams
 - [x] Figure out coordinate frame transformations of each necessary part (base, joints, end effector)
+- [ ] Get robot in simulation
+  - [x] URDF
+  - [x] Rviz
+  - [ ] Gazebo
+- [ ] Test Reinforcement Learning controls on simulation
 - [ ] Write code to do a "show floor" run of all of the robots capabilities
 - [ ] Use OpenCV to identify and get pose estimation of a ping pong ball
 - [ ] Figure out coordinate frame transforamtions of camera to robot

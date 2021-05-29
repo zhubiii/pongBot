@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <robot name="pongbot">
 
+    <!-- colors -->
     <material name="grey">
         <color rgba="1 1 1 1"/>
     </material>
@@ -11,7 +12,10 @@
         <color rgba="69 69 69 1"/>
     </material>
 
-    <link name="steel_plate">
+    <!-- base components -->
+
+    <!-- dummy root link -->
+    <link name="dummy_root">
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
@@ -20,6 +24,32 @@
             <material name="black"/>
         </visual>
     </link>
+
+    <link name="steel_plate">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size=".2032 .2032 .0127"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size=".2032 .2032 .0127"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="4.211"/>
+            <inertia ixx="0.01455" ixy="0.0" ixz="0.0" iyy="0.02898" iyz="0.0" izz="0.01455"/>
+        </inertial>
+    </link>
+
+    <joint name="dummy_to_steel" type="fixed">
+        <parent link="dummy_root"/>
+        <child link="steel_plate"/>
+        <origin xyz="0 0 0" />
+    </joint>
 
     <link name="base_1">
         <visual>
@@ -35,6 +65,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base1-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.047"/>
+            <inertia ixx="0.0000661731" ixy="0.0" ixz="0.0" iyy="0.0000661731" iyz="0.0" izz="0.000132188"/>
+        </inertial>
     </link>
 
     <joint name="steel_to_base1" type="fixed">
@@ -57,6 +91,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base2-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.041"/>
+            <inertia ixx="0.0000474814" ixy="0.0" ixz="0.0" iyy="0.0000474814" iyz="0.0" izz="0.000094792"/>
+        </inertial>
     </link>
 
     <joint name="base1_to_base2" type="fixed">
@@ -79,6 +117,10 @@
                 <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.0535"/>
+            <inertia ixx="0.0000182792" ixy="0.0" ixz="0.0" iyy="0.0000157111" iyz="0.0" izz="0.0000116987"/>
+        </inertial>
     </link>
 
     <joint name="steel_to_pan_motor" type="fixed">
@@ -101,6 +143,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base3_rim-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.016"/>
+            <inertia ixx="0.000025564" ixy="0.0" ixz="0.0" iyy="0.000025564" iyz="0.0" izz="0.000051104"/>
+        </inertial>
     </link>
 
     <joint name="base2_to_base3_rim" type="fixed">
@@ -123,15 +169,33 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/base/base3_turntable-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.017"/>
+            <inertia ixx="0.00000683541" ixy="0.0" ixz="0.0" iyy="0.00000683541" iyz="0.0" izz="0.0000136"/>
+        </inertial>
     </link>
 
     <joint name="pan_joint" type="revolute">
         <parent link="pan_motor"/>
         <child link="base_3_turntable"/>
         <origin xyz="0 0 0.037" />
-        <limit effort="1000.0" lower="-2.61799" upper="2.61799" velocity="0.5"/>
+        <limit effort="1.5" lower="-2.61799" upper="2.61799" velocity="0.5"/>
         <axis xyz="0 0 1"/>
     </joint>
+
+    <!-- This block connects the pan joint to an actuator (motor), which informs both
+    simulation and visualization of the robot -->
+    <transmission name="pan_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$pan_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="pan_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <!-- tilt -->
 
     <link name="tilt_motor">
         <visual>
@@ -147,15 +211,31 @@
                 <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.0535"/>
+            <inertia ixx="0.0000182792" ixy="0.0" ixz="0.0" iyy="0.0000157111" iyz="0.0" izz="0.0000116987"/>
+        </inertial>
     </link>
 
     <joint name="tilt_joint" type="revolute">
         <parent link="base_3_turntable"/>
         <child link="tilt_motor"/>
         <origin rpy="1.57075 0 0 " xyz="0 0 0.026" />
-        <limit effort="1000.0" lower="0" upper="3.14159" velocity="0.5"/>
+        <limit effort="1.5" lower="0" upper="3.14159" velocity="0.5"/>
         <axis xyz="0 0 1"/>
     </joint>
+
+    <!-- This block connects the tilt joint to an actuator (motor), which informs both
+    simulation and visualization of the robot -->
+    <transmission name="tilt_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$tilt_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="tilt_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
 
     <link name="rmale_link1">
         <visual>
@@ -171,6 +251,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Male_Link1_Panel-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.007"/>
+            <inertia ixx="0.0000119338" ixy="0.0" ixz="0.0" iyy="0.0000125259" iyz="0.0" izz="0.000000602583"/>
+        </inertial>
     </link>
 
     <joint name="tilt_to_right_link1" type="fixed">
@@ -193,6 +277,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Male_Link1_Panel-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.007"/>
+            <inertia ixx="0.0000119338" ixy="0.0" ixz="0.0" iyy="0.0000125259" iyz="0.0" izz="0.000000602583"/>
+        </inertial>
     </link>
 
     <joint name="tilt_to_left_link1" type="fixed">
@@ -215,6 +303,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Female_Link1_backPanel-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.011"/>
+            <inertia ixx="0.0000147931" ixy="0.0" ixz="0.0" iyy="0.0000168098" iyz="0.0" izz="0.00000203317"/>
+        </inertial>
     </link>
 
     <joint name="tilt_to_back_link1" type="fixed">
@@ -237,6 +329,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Female_Link1_frontPanel-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.010"/>
+            <inertia ixx="0.00000902083" ixy="0.0" ixz="0.0" iyy="0.0000108542" iyz="0.0" izz="0.00000184833"/>
+        </inertial>
     </link>
 
     <joint name="tilt_to_front_link1" type="fixed">
@@ -244,6 +340,8 @@
         <child link="ffemale_link1"/>
         <origin rpy="0 0 0" xyz="0.075 -0.015 0" />
     </joint>
+
+    <!-- elbow -->
 
     <link name="elbow_motor">
         <visual>
@@ -259,6 +357,10 @@
                 <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.0535"/>
+            <inertia ixx="0.0000182792" ixy="0.0" ixz="0.0" iyy="0.0000157111" iyz="0.0" izz="0.0000116987"/>
+        </inertial>
     </link>
 
     <joint name="tilt_to_elbow_motor" type="fixed">
@@ -274,15 +376,32 @@
                 <cylinder radius="0.008" length="0.001"/>
             </geometry>
         </visual>
+        <inertial>
+            <mass value="0"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
     </link>
 
     <joint name="elbow_joint" type="revolute">
         <parent link="elbow_motor"/>
         <child link="elbow_rot"/>
         <origin rpy="0 0 0 " xyz="0 0 0" />
-        <limit effort="1000.0" lower="0" upper="-3.14159" velocity="0.5"/>
+        <!-- Made upper 170 degrees-->
+        <limit effort="1.5" lower="-2.96705" upper="0" velocity="0.5"/>
         <axis xyz="0 0 1"/>
     </joint>
+
+    <!-- This block connects the tilt joint to an actuator (motor), which informs both
+    simulation and visualization of the robot -->
+    <transmission name="elbow_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$elbow_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="elbow_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
 
     <link name="left_link2">
         <visual>
@@ -298,6 +417,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Link2_sidepanel-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.007"/>
+            <inertia ixx="0.00000911983" ixy="0.0" ixz="0.0" iyy="0.00000942316" iyz="0.0" izz="0.000000313833"/>
+        </inertial>
     </link>
 
     <joint name="elbow_to_left_link2" type="fixed">
@@ -320,6 +443,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/links/Link2_sidepanel-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.007"/>
+            <inertia ixx="0.00000911983" ixy="0.0" ixz="0.0" iyy="0.00000942316" iyz="0.0" izz="0.000000313833"/>
+        </inertial>
     </link>
 
     <joint name="elbow_to_right_link2" type="fixed">
@@ -327,6 +454,8 @@
         <child link="right_link2"/>
         <origin rpy="0 0 0" xyz="0.06 0 -.02" />
     </joint>
+
+    <!-- Paddle -->
 
     <link name="paddle_motor">
         <visual>
@@ -342,6 +471,10 @@
                 <mesh scale="0.01 0.01 0.01" filename="file://$(find pongbot)/meshes/dxl.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.0535"/>
+            <inertia ixx="0.0000182792" ixy="0.0" ixz="0.0" iyy="0.0000157111" iyz="0.0" izz="0.0000116987"/>
+        </inertial>
     </link>
 
     <joint name="elbow_to_paddle_motor" type="fixed">
@@ -357,6 +490,10 @@
                 <cylinder radius="0.008" length="0.001"/>
             </geometry>
         </visual>
+        <inertial>
+            <mass value="0"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
     </link>
 
     <joint name="paddle_joint" type="continuous">
@@ -364,7 +501,20 @@
         <child link="paddle_rot"/>
         <origin rpy="0 0 0 " xyz="0 0 0.02" />
         <axis xyz="0 0 1"/>
+        <limit effort="1.5" velocity="1.0"/>
     </joint>
+
+    <!-- This block connects the tilt joint to an actuator (motor), which informs both
+    simulation and visualization of the robot -->
+    <transmission name="paddle_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$paddle_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="paddle_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
 
     <link name="paddle_holder">
         <visual>
@@ -380,6 +530,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/paddle/paddle_holder-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.021"/>
+            <inertia ixx="0.00000875" ixy="0.0" ixz="0.0" iyy="0.00000546875" iyz="0.0" izz="0.00000546875"/>
+        </inertial>
     </link>
 
     <joint name="paddle_motor_to_paddle_holder" type="fixed">
@@ -402,6 +556,10 @@
                 <mesh scale="0.001 0.001 0.001" filename="file://$(find pongbot)/meshes/paddle/paddle-Body.stl"/>
             </geometry>
         </collision>
+        <inertial>
+            <mass value="0.037"/>
+            <inertia ixx="0.0000391306" ixy="0.0" ixz="0.0" iyy="0.0000391306" iyz="0.0" izz="0.0000781625"/>
+        </inertial>
     </link>
 
     <joint name="paddle_rot_to_paddle" type="fixed">
@@ -409,4 +567,11 @@
         <child link="paddle"/>
         <origin rpy="0 0 0 " xyz="0 0 0.1106" />
     </joint>
+
+    <!-- Gazebo plugin for ROS control -->
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+        </plugin>
+    </gazebo>
 </robot>

@@ -1,0 +1,34 @@
+<launch>
+  <arg name="model" default="$(find pongbot)/urdf/pongbot.urdf"/>
+  <arg name="rvizconfig" default="$(find pongbot)/rviz/urdf.rviz" />
+
+  <include file="$(find pongbot)/launch/gazebo.launch">
+    <arg name="model" value="$(arg model)" />
+  </include>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" />
+
+  <rosparam command="load"
+            file="$(find pongbot)/config/joints.yaml"
+            ns="pongbot_joint_state_controller" />
+  <rosparam command="load"
+            file="$(find pongbot)/config/pan.yaml"
+            ns="pongbot_pan_controller" />
+  <rosparam command="load"
+            file="$(find pongbot)/config/tilt.yaml"
+            ns="pongbot_tilt_controller" />
+  <rosparam command="load"
+            file="$(find pongbot)/config/elbow.yaml"
+            ns="pongbot_elbow_controller" />
+  <rosparam command="load"
+            file="$(find pongbot)/config/paddle.yaml"
+            ns="pongbot_paddle_controller" />
+
+  <node name="pongbot_controller_spawner" pkg="controller_manager" type="spawner"
+    args="pongbot_joint_state_controller
+          pongbot_pan_controller
+          pongbot_tilt_controller
+          pongbot_elbow_controller
+          pongbot_paddle_controller
+          "/>
+</launch>
